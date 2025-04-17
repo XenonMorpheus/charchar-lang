@@ -27,7 +27,7 @@ You can easily customize this website by:
 
 ## Features
 
-1. Romantic landing with "Will you be my jowa?" prompt
+1. Romantic landing with "Will you be my cial?" prompt
 2. NO button that runs away, taunts you, and refuses rejection
 3. YES button triggers confetti, music, and memes
 4. Mobile-friendly + meme-powered responsiveness
