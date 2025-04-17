@@ -1,140 +1,121 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { Heart, Volume2, VolumeX } from "lucide-react"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import Confetti from "@/components/confetti"
+import { Volume2, VolumeX } from "lucide-react"
 import NoButton from "@/components/no-button"
 import MemeDisplay from "@/components/meme-display"
+import Confetti from "@/components/confetti"
 import KonamiCode from "@/components/konami-code"
 import { useSounds } from "@/hooks/use-sounds"
-import { cn } from "@/lib/utils"
 
-export default function HomePage() {
-  const [showConfetti, setShowConfetti] = useState(false)
-  const [showMemes, setShowMemes] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
+export default function Page() {
+  const [showCelebration, setShowCelebration] = useState(false)
   const [isSupremeMode, setIsSupremeMode] = useState(false)
-  const router = useRouter()
-  const { playYesSound, playBackgroundMusic, stopBackgroundMusic, toggleMute } = useSounds()
+  const { playYesSound, playBackgroundMusic, toggleMute, isMuted } = useSounds()
 
+  // Handle YES button click
   const handleYesClick = () => {
-    setShowConfetti(true)
-    setShowMemes(true)
     playYesSound()
     playBackgroundMusic()
+    setShowCelebration(true)
   }
 
-  const handleMuteToggle = () => {
-    setIsMuted(!isMuted)
-    toggleMute()
-  }
-
+  // Activate Super Simp Mode via Konami code
   const activateSupremeMode = () => {
     setIsSupremeMode(true)
   }
 
   return (
-    <main
-      className={cn(
-        "flex min-h-screen flex-col items-center justify-center p-4 md:p-24 relative overflow-hidden",
-        isSupremeMode
-          ? "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500"
-          : "bg-gradient-to-r from-pink-200 to-purple-200",
-      )}
-    >
-      {/* Floating hearts background */}
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Sound control button */}
+      <button
+        onClick={toggleMute}
+        className="absolute top-4 right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm z-50"
+        aria-label={isMuted ? "Unmute" : "Mute"}
+      >
+        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+      </button>
+
+      {/* Konami code detector */}
+      <KonamiCode onActivate={activateSupremeMode} />
+
+      {/* Background */}
+      <div
+        className={`absolute inset-0 ${
+          isSupremeMode
+            ? "bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-500"
+            : "bg-gradient-to-br from-pink-100 to-rose-100"
+        } transition-colors duration-1000`}
+      >
+        {/* Floating hearts background */}
+        {Array.from({ length: isSupremeMode ? 20 : 10 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute text-pink-500"
+            className="absolute text-pink-500 opacity-20"
             initial={{
               x: Math.random() * 100 - 50 + "%",
-              y: Math.random() * 100 + 100 + "%",
-              opacity: Math.random() * 0.5 + 0.3,
+              y: Math.random() * 100 + "%",
               scale: Math.random() * 0.5 + 0.5,
             }}
             animate={{
               y: [null, "-100%"],
-              rotate: [0, Math.random() * 360],
-            }}
-            transition={{
-              duration: Math.random() * 20 + 15,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "linear",
+              transition: {
+                y: {
+                  duration: Math.random() * 10 + 10,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                },
+              },
             }}
           >
-            <Heart size={Math.random() * 20 + 10} fill="currentColor" />
+            ❤️
           </motion.div>
         ))}
       </div>
 
-      <KonamiCode onActivate={activateSupremeMode} />
-
-      {/* Sound controls */}
-      <div className="absolute top-4 right-4 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleMuteToggle}
-          className="rounded-full bg-white/30 backdrop-blur-sm hover:bg-white/50"
-        >
-          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-        </Button>
-      </div>
-
       {/* Main content */}
-      <AnimatePresence>
-        {!showMemes ? (
-          <motion.div
-            className="flex flex-col items-center justify-center gap-8 text-center z-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+      {!showCelebration ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center justify-center gap-12 text-center z-10"
+        >
+          <motion.h1
+            className={`text-4xl md:text-6xl font-bold ${
+              isSupremeMode ? "text-white drop-shadow-lg" : "text-pink-600"
+            }`}
+            initial={{ scale: 0.8 }}
+            animate={{ scale: [null, 1.05, 1] }}
+            transition={{ duration: 0.5, times: [0, 0.7, 1] }}
           >
-            <motion.h1
-              className={cn(
-                "text-4xl md:text-6xl font-bold text-pink-600 mb-4",
-                isSupremeMode && "text-white drop-shadow-lg",
-              )}
-              animate={
+            Will you be my Cial?
+          </motion.h1>
+
+          <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-center">
+            <Button
+              onClick={handleYesClick}
+              size="lg"
+              className={`text-xl px-12 py-6 rounded-full shadow-md ${
                 isSupremeMode
-                  ? {
-                      scale: [1, 1.05, 1],
-                      transition: { repeat: Number.POSITIVE_INFINITY, duration: 1.5 },
-                    }
-                  : {}
-              }
+                  ? "bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-yellow-500 hover:to-pink-600 text-white"
+                  : "bg-pink-500 hover:bg-pink-600 text-white"
+              }`}
             >
-              Will you be my Cial?
-            </motion.h1>
+              YES
+            </Button>
 
-            <div className="flex flex-col md:flex-row gap-6 items-center">
-              <Button
-                onClick={handleYesClick}
-                size="lg"
-                className={cn(
-                  "text-xl px-12 py-6 bg-pink-500 hover:bg-pink-600 text-white rounded-full shadow-lg",
-                  isSupremeMode &&
-                    "bg-gradient-to-r from-yellow-400 to-pink-500 hover:from-yellow-500 hover:to-pink-600",
-                )}
-              >
-                YES
-              </Button>
-
-              <NoButton isSupremeMode={isSupremeMode} />
-            </div>
-          </motion.div>
-        ) : (
+            <NoButton isSupremeMode={isSupremeMode} />
+          </div>
+        </motion.div>
+      ) : (
+        <>
           <MemeDisplay isSupremeMode={isSupremeMode} />
-        )}
-      </AnimatePresence>
-
-      {/* Confetti overlay */}
-      {showConfetti && <Confetti />}
+          <Confetti />
+        </>
+      )}
     </main>
   )
 }
