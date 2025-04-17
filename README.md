@@ -13,7 +13,7 @@
 
 # Charchar-lang Confession Website
 
-A fun and chaotic good web confession inspired by valhndsm/proposal — but upgraded with smoother UI/UX, responsive design, and enough memes to make your crush laugh and say yes. Built to shoot your shot the developer way.
+A fun and chaotic good web confession inspired by [valhndsm/proposal](https://valhndsm.github.io/proposal/) — but upgraded with smoother UI/UX, responsive design, and enough memes to make your crush laugh and say yes. Built to shoot your shot the developer way.
 
 
 
@@ -50,3 +50,5 @@ cd charchar-lang
 npm install
 
 npm run dev
+
+# Go Live: https://proposallol.netlify.app/
